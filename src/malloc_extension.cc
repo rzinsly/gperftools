@@ -194,23 +194,14 @@ void MallocExtension::GetFreeListSizes(
 
 // The current malloc extension object.
 
-static pthread_once_t module_init = PTHREAD_ONCE_INIT;
-static MallocExtension* current_instance = NULL;
-
-static void InitModule() {
-  current_instance = new MallocExtension;
-#ifndef NO_HEAP_CHECK
-  HeapLeakChecker::IgnoreObject(current_instance);
-#endif
-}
+static MallocExtension defaultImplementation;
+static MallocExtension* current_instance = &defaultImplementation;
 
 MallocExtension* MallocExtension::instance() {
-  perftools_pthread_once(&module_init, InitModule);
   return current_instance;
 }
 
 void MallocExtension::Register(MallocExtension* implementation) {
-  perftools_pthread_once(&module_init, InitModule);
   // When running under valgrind, our custom malloc is replaced with
   // valgrind's one and malloc extensions will not work.  (Note:
   // callers should be responsible for checking that they are the
