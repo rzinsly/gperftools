@@ -5096,7 +5096,9 @@ sub GetProcedureBoundariesViaNm {
            || error("$cmd | $grep | $tail: $!\n");
       s/\r//g; # turn windows-looking lines into unix-looking lines
       my $data = <FINI>;
-      ($start_val, $fini) = split(/ </,$data);
+      if (defined($data)){
+        ($start_val, $fini) = split(/ </,$data);
+      }
       close(FINI);
     }
     $sep_address = HexExtend($start_val);
